@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 244 239 234;
+    --foreground: 56 56 56;
+    --shadow-color: 56 56 56;
+    --grain-opacity: 0.03;
+  }
+
+  .dark {
+    --background: 26 26 26;
+    --foreground: 255 255 255;
+    --shadow-color: 255 255 255;
+    --grain-opacity: 0.05;
+  }
+
+  body {
+    @apply bg-light-primary dark:bg-dark-primary text-light-text dark:text-dark-text;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .btn-brutal {
+    @apply relative font-black uppercase tracking-wider px-9 py-[18px]
+           bg-white dark:bg-dark-secondary text-light-text dark:text-dark-text
+           border-[5px] border-light-border dark:border-dark-border
+           rounded-xl shadow-brutal-button
+           hover:translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-button-hover
+           active:-translate-x-0.5 active:translate-y-0.5 active:shadow-brutal-active
+           transition-all duration-150;
+    font-family: 'Unbounded', system-ui, sans-serif;
+  }
+
+  .card-brutal {
+    @apply bg-light-secondary dark:bg-dark-secondary
+           border-[5px] border-light-border dark:border-dark-border
+           rounded-[20px] shadow-brutal-card;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .input-brutal {
+    @apply w-full px-5 py-[18px] font-semibold text-base
+           bg-light-secondary dark:bg-dark-secondary
+           text-light-text dark:text-dark-text
+           border-2 border-light-borderSecondary dark:border-dark-borderSecondary
+           rounded-xl shadow-brutal-badge
+           focus:outline-none focus:translate-x-px focus:-translate-y-px
+           focus:shadow-brutal-input-focus focus:border-accent-cyan
+           transition-all duration-150;
+  }
+
+  .badge-brutal {
+    @apply inline-block px-4 py-2
+           font-black text-sm uppercase tracking-tight
+           border-[3px] border-light-border dark:border-dark-border
+           rounded-xl shadow-brutal-badge
+           hover:translate-x-px hover:-translate-y-px hover:shadow-[-4px_4px_0_0_rgb(var(--shadow-color))]
+           transition-all duration-150;
+  }
+
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
