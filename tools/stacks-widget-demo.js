@@ -582,19 +582,30 @@
   }
 
   // ============================================
-  // INJECT INTO PAGE
+  // INJECT INTO PAGE - Replace their search bar
   // ============================================
-  // Find their header/nav area and inject after it
-  const header = document.querySelector('header') ||
-                 document.querySelector('.site-header') ||
-                 document.querySelector('nav')?.parentElement ||
-                 document.querySelector('.header');
+  // Find their search form containing input[type="search"]
+  const searchInput = document.querySelector('input[type="search"]');
+  const searchForm = searchInput?.closest('form');
 
-  if (header) {
-    header.insertAdjacentElement('afterend', widget);
+  if (searchForm) {
+    // Hide their search form and insert STACKS in its place
+    searchForm.style.display = 'none';
+    searchForm.insertAdjacentElement('afterend', widget);
+    console.log('✅ Replaced their search form with STACKS widget');
   } else {
-    // Fallback: insert at top of body
-    document.body.insertBefore(widget, document.body.firstChild);
+    // Fallback: try to find header and inject after
+    const header = document.querySelector('header') ||
+                   document.querySelector('.site-header') ||
+                   document.querySelector('nav')?.parentElement;
+
+    if (header) {
+      header.insertAdjacentElement('afterend', widget);
+      console.log('⚠️ Could not find search form, injected after header');
+    } else {
+      document.body.insertBefore(widget, document.body.firstChild);
+      console.log('⚠️ Fallback: injected at top of body');
+    }
   }
 
   // ============================================
