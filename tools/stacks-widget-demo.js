@@ -108,7 +108,8 @@
     }
 
     .stacks-inner {
-      max-width: var(--stacks-content-width, 1200px);
+      width: 1200px;
+      max-width: 100%;
       margin: 0 auto;
       padding: 16px 24px;
     }
@@ -464,55 +465,6 @@
     }
   `;
   document.head.appendChild(styles);
-
-  // ============================================
-  // DETECT SITE'S CONTENT WIDTH
-  // ============================================
-  function detectContentWidth() {
-    // Try to find main content containers and get their max-width
-    const selectors = [
-      'main',
-      '.main-content',
-      '.site-content',
-      '.container',
-      '.page-width',
-      'article',
-      '.content-wrapper'
-    ];
-
-    for (const sel of selectors) {
-      const el = document.querySelector(sel);
-      if (el) {
-        const computed = getComputedStyle(el);
-        const maxWidth = computed.maxWidth;
-        if (maxWidth && maxWidth !== 'none') {
-          return maxWidth;
-        }
-        // If no max-width, use actual width if it's constrained
-        const width = el.getBoundingClientRect().width;
-        if (width > 0 && width < window.innerWidth * 0.95) {
-          return width + 'px';
-        }
-      }
-    }
-
-    // Fallback: check their header/nav width
-    const header = document.querySelector('header, .site-header, nav');
-    if (header) {
-      const inner = header.querySelector('[class*="container"], [class*="wrapper"], [class*="inner"]');
-      if (inner) {
-        const width = inner.getBoundingClientRect().width;
-        if (width > 0) return width + 'px';
-      }
-    }
-
-    // Default fallback
-    return '1200px';
-  }
-
-  const contentWidth = detectContentWidth();
-  document.documentElement.style.setProperty('--stacks-content-width', contentWidth);
-  console.log(`📐 Detected content width: ${contentWidth}`);
 
   // ============================================
   // CREATE WIDGET HTML
