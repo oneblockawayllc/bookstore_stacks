@@ -1138,10 +1138,10 @@
 
       <!-- Chips - single row -->
       <div class="stacks-chips">
+        <button class="stacks-chip" data-query="ancient egypt">ANCIENT EGYPT</button>
         <button class="stacks-chip">DARK ACADEMIA</button>
         <button class="stacks-chip">COZY FANTASY</button>
         <button class="stacks-chip">ROMANTASY</button>
-        <button class="stacks-chip">ENEMIES TO LOVERS</button>
       </div>
 
       <!-- Find Your Next Read section -->
