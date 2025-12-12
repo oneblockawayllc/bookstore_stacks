@@ -1,189 +1,523 @@
-// STACKS Widget Demo - Expandable Search Experience
+// STACKS Widget Demo - Hybrid Inline Trigger + Overlay Experience
 // Paste in DevTools console on quailridgebooks.com
+// Uses Shadow DOM for complete CSS isolation from host site
 
 (function() {
   // ============================================
-  // MOCK DATA - "books like Succession the show"
+  // MOCK DATA - Multiple demo pathways
   // ============================================
-  const MOCK_RESULTS = {
+
+  // Fiction/Vibe intent - "books like Succession the show"
+  const MOCK_SUCCESSION = {
     query: "books like Succession the show",
-    atmosphere: {
-      tags: ["CUTTHROAT", "LUXURIOUS", "DARKLY COMIC", "TENSE"],
-      books: [
-        {
-          title: "The Nest",
-          author: "Cynthia D'Aprix Sweeney",
-          cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1451446136i/28220826.jpg",
-          description: "Four adult siblings await their inheritance while secrets and betrayals threaten to tear the family apart.",
-          inStock: true,
-          match: 94,
-          pages: 354
-        },
-        {
-          title: "Trust",
-          author: "Hernan Diaz",
-          cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1635095454i/59808603.jpg",
-          description: "A wealthy financier's legacy unravels through competing narratives of power, money, and manipulation.",
-          inStock: true,
-          match: 91,
-          pages: 416
-        }
-      ]
-    },
-    characters: {
-      tags: ["MORALLY GREY", "AMBITIOUS", "MANIPULATIVE", "PRIVILEGED"],
-      books: [
-        {
-          title: "The House of Mirth",
-          author: "Edith Wharton",
-          cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1564063693i/17728.jpg",
-          description: "A beautiful woman navigates New York high society's treacherous waters where wealth determines worth.",
-          inStock: false,
-          match: 88,
-          pages: 352
-        },
-        {
-          title: "The Bonfire of the Vanities",
-          author: "Tom Wolfe",
-          cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1388200270i/2684.jpg",
-          description: "A Wall Street bond trader's life implodes in this savage satire of greed, class, and ambition.",
-          inStock: true,
-          match: 86,
-          pages: 690
-        }
-      ]
-    },
-    plot: {
-      tags: ["FAMILY DRAMA", "POWER STRUGGLES", "BETRAYAL", "WEALTH"],
-      books: [
-        {
-          title: "A Little Life",
-          author: "Hanya Yanagihara",
-          cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1446469353i/22822858.jpg",
-          description: "Four friends navigate ambition, success, and devastating secrets in New York City.",
-          inStock: true,
-          match: 85,
-          pages: 720
-        },
-        {
-          title: "The Corrections",
-          author: "Jonathan Franzen",
-          cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1355011305i/3805.jpg",
-          description: "A dysfunctional Midwestern family confronts their failures as they gather for one last Christmas.",
-          inStock: true,
-          match: 82,
-          pages: 568
-        }
-      ]
-    }
+    intent: "fiction_vibe",
+    query_understanding: "You're looking for books with the same energy as Succession—wealthy family dynasties, power struggles, dark humor, and morally complex characters.",
+    lanes: [
+      {
+        name: "Atmosphere",
+        icon: "🌟",
+        type: "atmosphere",
+        tags: ["CUTTHROAT", "LUXURIOUS", "DARKLY COMIC", "TENSE"],
+        books: [
+          {
+            title: "The Nest",
+            author: "Cynthia D'Aprix Sweeney",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1451446136i/28220826.jpg",
+            description: "Four adult siblings await their inheritance while secrets and betrayals threaten to tear the family apart.",
+            rationale: "Captures the same wealthy-family-imploding energy you loved in Succession. The siblings circle their inheritance like sharks, and every conversation drips with passive aggression.",
+            inStock: true,
+            match: 94,
+            pages: 354,
+            badge: "mayas_pick"
+          },
+          {
+            title: "Trust",
+            author: "Hernan Diaz",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1635095454i/59808603.jpg",
+            description: "A wealthy financier's legacy unravels through competing narratives of power, money, and manipulation.",
+            rationale: "The old-money Manhattan atmosphere you're after, but told through unreliable narrators fighting over whose version of events is true. It's Succession meets Rashomon.",
+            inStock: true,
+            match: 91,
+            pages: 416
+          }
+        ]
+      },
+      {
+        name: "Characters",
+        icon: "💫",
+        type: "characters",
+        tags: ["MORALLY GREY", "AMBITIOUS", "MANIPULATIVE", "PRIVILEGED"],
+        books: [
+          {
+            title: "The House of Mirth",
+            author: "Edith Wharton",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1564063693i/17728.jpg",
+            description: "A beautiful woman navigates New York high society's treacherous waters where wealth determines worth.",
+            rationale: "Lily Bart is the Shiv Roy of the 1900s—brilliant, trapped by her world's rules, making devastating choices. The society is just as cutthroat, the falls just as hard.",
+            inStock: false,
+            match: 88,
+            pages: 352,
+            badge: "neighborhood_favorite"
+          },
+          {
+            title: "The Bonfire of the Vanities",
+            author: "Tom Wolfe",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1388200270i/2684.jpg",
+            description: "A Wall Street bond trader's life implodes in this savage satire of greed, class, and ambition.",
+            rationale: "Sherman McCoy is what happens when a Waystar exec gets caught. Same savage takedown of the ultra-wealthy, same dark comedy as everyone scrambles to save themselves.",
+            inStock: true,
+            match: 86,
+            pages: 690
+          }
+        ]
+      },
+      {
+        name: "Plot",
+        icon: "📖",
+        type: "plot",
+        tags: ["FAMILY DRAMA", "POWER STRUGGLES", "BETRAYAL", "WEALTH"],
+        books: [
+          {
+            title: "A Little Life",
+            author: "Hanya Yanagihara",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1446469353i/22822858.jpg",
+            description: "Four friends navigate ambition, success, and devastating secrets in New York City.",
+            rationale: "The found-family dynamics and New York ambition you want, but even more emotionally devastating. If Succession made you feel things, this will wreck you.",
+            inStock: true,
+            match: 85,
+            pages: 720
+          },
+          {
+            title: "The Corrections",
+            author: "Jonathan Franzen",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1355011305i/3805.jpg",
+            description: "A dysfunctional Midwestern family confronts their failures as they gather for one last Christmas.",
+            rationale: "Same family-as-battlefield structure—everyone has an agenda, everyone's keeping score. The Lamberts are the Roys without the billions, which somehow makes it worse.",
+            inStock: true,
+            match: 82,
+            pages: 568,
+            badge: "author_coming"
+          }
+        ]
+      }
+    ]
+  };
+
+  // Topic intent - "ancient egypt"
+  const MOCK_EGYPT = {
+    query: "ancient egypt",
+    intent: "topic",
+    query_understanding: "You're looking for books about Ancient Egypt—its history, mysteries, pharaohs, and the civilization that built the pyramids.",
+    lanes: [
+      {
+        name: "Foundational",
+        icon: "🏛️",
+        type: "foundational",
+        tags: ["SCHOLARLY", "COMPREHENSIVE", "AUTHORITATIVE"],
+        books: [
+          {
+            title: "The Oxford History of Ancient Egypt",
+            author: "Ian Shaw",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1348902666i/580057.jpg",
+            description: "The definitive single-volume history covering 3,000 years from prehistory to the Roman conquest.",
+            rationale: "The authoritative starting point you need—covers every dynasty from leading Egyptologists. Dense but accessible, it's the foundation scholars build on.",
+            inStock: true,
+            match: 96,
+            pages: 552,
+            badge: "mayas_pick"
+          },
+          {
+            title: "The Rise and Fall of Ancient Egypt",
+            author: "Toby Wilkinson",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320518498i/6981605.jpg",
+            description: "A sweeping narrative of Egyptian civilization from its origins to Cleopatra's death.",
+            rationale: "Balances scholarship with storytelling—you'll understand the politics, power struggles, and personalities that shaped 3,000 years of civilization.",
+            inStock: true,
+            match: 93,
+            pages: 646
+          }
+        ]
+      },
+      {
+        name: "Narrative",
+        icon: "📜",
+        type: "narrative",
+        tags: ["STORY-DRIVEN", "IMMERSIVE", "ADVENTUROUS"],
+        books: [
+          {
+            title: "The Discovery of the Tomb of Tutankhamen",
+            author: "Howard Carter",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320519789i/91919.jpg",
+            description: "The archaeologist's own account of finding the most famous tomb in history.",
+            rationale: "First-person account of THE discovery—opening the sealed door, seeing gold glinting in candlelight. History doesn't get more thrilling than this.",
+            inStock: false,
+            match: 91,
+            pages: 256,
+            badge: "neighborhood_favorite"
+          },
+          {
+            title: "Cleopatra: A Life",
+            author: "Stacy Schiff",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1348903337i/7968243.jpg",
+            description: "Pulitzer Prize-winning biography separating the real Cleopatra from myth and Hollywood.",
+            rationale: "Reads like a thriller about the most famous woman in antiquity. You wanted Egypt's story—this is its dramatic finale through an unforgettable character.",
+            inStock: true,
+            match: 88,
+            pages: 368
+          }
+        ]
+      },
+      {
+        name: "Start Here",
+        icon: "🔍",
+        type: "start-here",
+        tags: ["BEGINNER-FRIENDLY", "VISUAL", "ENGAGING"],
+        books: [
+          {
+            title: "Red Land, Black Land",
+            author: "Barbara Mertz",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320468043i/93387.jpg",
+            description: "Daily life in ancient Egypt—what people ate, wore, believed, and feared.",
+            rationale: "Forget pharaohs for a moment—this is about regular Egyptians. Witty, warm, and makes the ancient world feel human. Perfect entry point.",
+            inStock: true,
+            match: 85,
+            pages: 416
+          },
+          {
+            title: "Temples, Tombs and Hieroglyphs",
+            author: "Barbara Mertz",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320468017i/93388.jpg",
+            description: "A popular history of ancient Egypt told with wit and scholarly depth.",
+            rationale: "Barbara Mertz (who also wrote mysteries as Elizabeth Peters) makes Egyptology genuinely fun. You'll learn the history without it feeling like homework.",
+            inStock: true,
+            match: 82,
+            pages: 324,
+            badge: "author_coming"
+          }
+        ]
+      }
+    ]
+  };
+
+  // Fiction/Vibe intent - "ancient egypt fiction" / "novels set in egypt"
+  const MOCK_EGYPT_FICTION = {
+    query: "ancient egypt fiction",
+    intent: "fiction_vibe",
+    query_understanding: "You're looking for novels set in ancient Egypt—stories that bring pharaohs, pyramids, and the Nile to life through fiction.",
+    lanes: [
+      {
+        name: "Atmosphere",
+        icon: "🌟",
+        type: "atmosphere",
+        tags: ["EXOTIC", "MYSTERIOUS", "SWEEPING", "ANCIENT"],
+        books: [
+          {
+            title: "The Egyptian",
+            author: "Mika Waltari",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1388246873i/77131.jpg",
+            description: "A physician's journey through ancient Egypt during the reign of Akhenaten.",
+            rationale: "The definitive ancient Egypt novel—lush, epic, and deeply immersive. You'll smell the incense and feel the sand.",
+            inStock: true,
+            match: 95,
+            pages: 503,
+            badge: "mayas_pick"
+          },
+          {
+            title: "River God",
+            author: "Wilbur Smith",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1392818310i/43164.jpg",
+            description: "An epic tale of ancient Egypt told through the eyes of a slave.",
+            rationale: "Adventure, intrigue, and Egyptian grandeur. Smith makes the ancient world pulse with life and danger.",
+            inStock: true,
+            match: 91,
+            pages: 672
+          }
+        ]
+      },
+      {
+        name: "Characters",
+        icon: "💫",
+        type: "characters",
+        tags: ["POWERFUL WOMEN", "COMPLEX", "ROYAL", "MEMORABLE"],
+        books: [
+          {
+            title: "Nefertiti",
+            author: "Michelle Moran",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320519059i/52952.jpg",
+            description: "The story of Egypt's most beautiful queen, told by her sister.",
+            rationale: "Palace intrigue, sibling rivalry, and a queen who changed history. Moran brings Nefertiti to vivid, complicated life.",
+            inStock: true,
+            match: 89,
+            pages: 480,
+            badge: "neighborhood_favorite"
+          },
+          {
+            title: "Cleopatra's Daughter",
+            author: "Michelle Moran",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320519829i/3319238.jpg",
+            description: "The forgotten story of Cleopatra's twin children after their mother's death.",
+            rationale: "What happened to Cleopatra's kids? This gripping novel follows them to Rome as captives of Augustus.",
+            inStock: false,
+            match: 86,
+            pages: 431
+          }
+        ]
+      },
+      {
+        name: "Plot",
+        icon: "📖",
+        type: "plot",
+        tags: ["MYSTERY", "ADVENTURE", "INTRIGUE", "DISCOVERY"],
+        books: [
+          {
+            title: "Crocodile on the Sandbank",
+            author: "Elizabeth Peters",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1388760952i/405148.jpg",
+            description: "Victorian Egyptologist Amelia Peabody encounters mystery and romance in Egypt.",
+            rationale: "Part mystery, part adventure, entirely delightful. Amelia Peabody is the witty heroine you didn't know you needed.",
+            inStock: true,
+            match: 88,
+            pages: 291,
+            badge: "author_coming"
+          },
+          {
+            title: "The Mask of Ra",
+            author: "Paul Doherty",
+            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320519479i/79180.jpg",
+            description: "A judge investigates murders in the court of Pharaoh Hatusu.",
+            rationale: "Ancient Egypt meets murder mystery. If you want plot twists with your pyramids, start here.",
+            inStock: true,
+            match: 84,
+            pages: 282
+          }
+        ]
+      }
+    ]
+  };
+
+  // Map queries to mock data
+  const MOCK_DATA = {
+    'succession': MOCK_SUCCESSION,
+    'like succession': MOCK_SUCCESSION,
+    'books like succession': MOCK_SUCCESSION,
+    'ancient egypt': MOCK_EGYPT,
+    'egypt': MOCK_EGYPT,
+    'pyramids': MOCK_EGYPT,
+    // Fiction variants for Egypt
+    'ancient egypt fiction': MOCK_EGYPT_FICTION,
+    'ancient egypt novels': MOCK_EGYPT_FICTION,
+    'ancient egypt novel': MOCK_EGYPT_FICTION,
+    'egypt fiction': MOCK_EGYPT_FICTION,
+    'novels set in egypt': MOCK_EGYPT_FICTION,
+    'novels set in ancient egypt': MOCK_EGYPT_FICTION,
+    'egyptian fiction': MOCK_EGYPT_FICTION,
+    'historical fiction egypt': MOCK_EGYPT_FICTION
   };
 
   // ============================================
-  // STYLES
+  // STYLES - Neobrutalist Design System
   // ============================================
+
+  // Import Unbounded font
+  const fontLink = document.createElement('link');
+  fontLink.href = 'https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800;900&display=swap';
+  fontLink.rel = 'stylesheet';
+  document.head.appendChild(fontLink);
+
+  // Design tokens - matched to bookstore-discover demo
+  const tokens = {
+    colors: {
+      primary: '#cf3535',           // Quail Ridge brand red (trigger bar only)
+      secondary: '#FFFFFF',
+      background: '#F4EFEA',        // Cream from demo design system
+      text: '#383838',
+      textSecondary: '#6B6B6B',
+      textTertiary: '#999999',
+      textOnRed: '#FFFFFF',
+      textOnRedMuted: 'rgba(255,255,255,0.85)',
+      border: '#383838',
+      accentCyan: '#6FC2FF',
+      accentPurple: '#667eea',
+      accentCoral: '#FF7169',
+      accentYellow: '#EAC435',
+      backdrop: 'rgba(0,0,0,0.6)',
+    },
+    shadows: {
+      card: '-8px 8px 0 0 #383838',
+      button: '-4px 4px 0 0 #383838',
+      buttonHover: '-6px 6px 0 0 #383838',
+      badge: '-3px 3px 0 0 #383838',
+      input: '-4px 4px 0 0 #383838',
+      inputFocus: '-5px 5px 0 0 #6FC2FF',
+      hover: '-10px 10px 0 0 #383838',
+      modal: '-12px 12px 0 0 #383838',
+    }
+  };
+
   const styles = document.createElement('style');
   styles.textContent = `
-    .stacks-widget {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f8f8f8;
-      border-bottom: 1px solid #e0e0e0;
-      overflow: hidden;
-      transition: max-height 0.4s ease-out;
-    }
-
-    .stacks-widget * {
-      box-sizing: border-box;
-    }
-
-    .stacks-widget.collapsed {
-      max-height: 70px;
-    }
-
-    .stacks-widget.expanded {
-      max-height: 500px;
-    }
-
-    .stacks-widget.results {
-      max-height: 650px;
-    }
-
-    .stacks-inner {
-      width: 1400px;
-      max-width: 100%;
-      margin: 0 auto;
-      padding: 16px 24px;
-    }
-
-    /* Collapsed State */
-    .stacks-collapsed-bar {
+    /* ============================================
+       INLINE TRIGGER BAR (replaces their search)
+       ============================================ */
+    .stacks-trigger {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: ${tokens.colors.primary};
+      padding: 12px 24px;
       display: flex;
       align-items: center;
       gap: 16px;
-      cursor: pointer;
     }
 
-    .stacks-collapsed-bar .stacks-brand {
+    .stacks-trigger * {
+      box-sizing: border-box;
+    }
+
+    .stacks-trigger .stacks-brand {
       display: flex;
       align-items: baseline;
       gap: 8px;
       white-space: nowrap;
     }
 
-    .stacks-collapsed-bar .stacks-title {
+    .stacks-trigger .stacks-title {
+      font-family: 'Unbounded', system-ui, sans-serif;
       font-size: 18px;
-      font-weight: 800;
-      color: #1a1a1a;
-      letter-spacing: 0.5px;
-      text-decoration: underline;
-      text-decoration-style: dashed;
-      text-underline-offset: 4px;
+      font-weight: 900;
+      color: ${tokens.colors.textOnRed};
+      letter-spacing: -0.025em;
+      text-transform: uppercase;
     }
 
-    .stacks-collapsed-bar .stacks-powered {
+    .stacks-trigger .stacks-powered {
       font-size: 11px;
-      color: #666;
+      font-weight: 600;
+      color: ${tokens.colors.textOnRedMuted};
     }
 
-    .stacks-collapsed-bar .stacks-powered strong {
-      font-weight: 700;
-      color: #333;
+    .stacks-trigger .stacks-powered strong {
+      font-family: 'Unbounded', system-ui, sans-serif;
+      font-weight: 900;
+      color: ${tokens.colors.textOnRed};
+      letter-spacing: -0.025em;
     }
 
-    .stacks-collapsed-bar input {
+    .stacks-trigger-input {
       flex: 1;
-      padding: 14px 20px;
+      padding: 14px 18px;
       font-size: 15px;
-      border: 3px solid #1a1a1a;
-      border-radius: 8px;
+      font-weight: 600;
+      border: 3px solid ${tokens.colors.border};
+      border-radius: 10px;
       outline: none;
-      background: white;
+      background: ${tokens.colors.secondary};
+      color: ${tokens.colors.text};
+      box-shadow: ${tokens.shadows.badge};
+      cursor: pointer;
+      transition: all 0.15s;
     }
 
-    .stacks-collapsed-bar input::placeholder {
-      color: #999;
+    .stacks-trigger-input:hover {
+      transform: translate(1px, -1px);
+      box-shadow: ${tokens.shadows.button};
     }
 
-    /* Expanded State */
-    .stacks-expanded {
-      display: none;
-      padding-top: 8px;
+    .stacks-trigger-input::placeholder {
+      color: ${tokens.colors.textTertiary};
     }
 
-    .stacks-widget.expanded .stacks-expanded,
-    .stacks-widget.results .stacks-expanded {
-      display: block;
+    /* ============================================
+       OVERLAY BACKDROP
+       ============================================ */
+    .stacks-backdrop {
+      position: fixed;
+      inset: 0;
+      background: ${tokens.colors.backdrop};
+      z-index: 99998;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
     }
 
-    .stacks-widget.expanded .stacks-collapsed-bar,
-    .stacks-widget.results .stacks-collapsed-bar {
-      display: none;
+    .stacks-backdrop.open {
+      opacity: 1;
+      visibility: visible;
     }
 
+    /* ============================================
+       OVERLAY MODAL
+       ============================================ */
+    .stacks-modal {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.95);
+      width: 90vw;
+      max-width: 1100px;
+      max-height: 85vh;
+      background: ${tokens.colors.background};
+      border: 5px solid ${tokens.colors.border};
+      border-radius: 20px;
+      box-shadow: ${tokens.shadows.modal};
+      z-index: 99999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .stacks-modal.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .stacks-modal * {
+      box-sizing: border-box;
+    }
+
+    .stacks-modal-inner {
+      padding: 28px 32px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* ============================================
+       MODAL HEADER
+       ============================================ */
     .stacks-header {
       display: flex;
       align-items: flex-start;
       gap: 24px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .stacks-close-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: ${tokens.colors.secondary};
+      border: 3px solid ${tokens.colors.border};
+      border-radius: 12px;
+      width: 44px;
+      height: 44px;
+      font-size: 24px;
+      font-weight: 900;
+      cursor: pointer;
+      color: ${tokens.colors.text};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: ${tokens.shadows.badge};
+      transition: all 0.15s;
+    }
+
+    .stacks-close-btn:hover {
+      transform: translate(1px, -1px);
+      box-shadow: ${tokens.shadows.button};
     }
 
     .stacks-header-left {
@@ -191,10 +525,12 @@
     }
 
     .stacks-header-left .title {
+      font-family: 'Unbounded', system-ui, sans-serif;
       font-size: 32px;
       font-weight: 900;
-      color: #1a1a1a;
-      letter-spacing: 1px;
+      color: ${tokens.colors.text};
+      letter-spacing: -0.025em;
+      text-transform: uppercase;
       text-decoration: underline;
       text-decoration-style: dashed;
       text-underline-offset: 6px;
@@ -202,42 +538,62 @@
     }
 
     .stacks-header-left .powered {
-      font-size: 12px;
-      color: #666;
+      font-size: 13px;
+      font-weight: 600;
+      color: ${tokens.colors.textSecondary};
+      margin: 0;
     }
 
     .stacks-header-left .powered strong {
-      font-weight: 700;
-      color: #333;
-      letter-spacing: 0.5px;
+      font-family: 'Unbounded', system-ui, sans-serif;
+      font-weight: 900;
+      color: ${tokens.colors.text};
+      letter-spacing: -0.025em;
     }
 
     .stacks-header-right {
-      padding-top: 8px;
+      padding-top: 6px;
       font-size: 14px;
-      color: #555;
+      font-weight: 600;
+      color: ${tokens.colors.textSecondary};
       line-height: 1.5;
-      max-width: 400px;
+      max-width: 380px;
     }
 
+    /* ============================================
+       SEARCH INPUT (in modal)
+       ============================================ */
     .stacks-search-row {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .stacks-search-input {
       width: 100%;
-      padding: 16px 20px 16px 48px;
-      font-size: 16px;
-      border: 3px solid #1a1a1a;
-      border-radius: 8px;
+      padding: 18px 24px 18px 52px;
+      font-size: 17px;
+      font-weight: 600;
+      border: 4px solid ${tokens.colors.border};
+      border-radius: 12px;
       outline: none;
-      background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%239333ea' stroke-width='2'%3E%3Cpath d='M12 3l1.5 3.5L17 8l-3.5 1.5L12 13l-1.5-3.5L7 8l3.5-1.5L12 3z'/%3E%3Cpath d='M5 16l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z'/%3E%3C/svg%3E") 16px center no-repeat;
+      background: ${tokens.colors.secondary} url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2.5'%3E%3Cpath d='M12 3l1.5 3.5L17 8l-3.5 1.5L12 13l-1.5-3.5L7 8l3.5-1.5L12 3z'/%3E%3Cpath d='M5 16l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z'/%3E%3C/svg%3E") 18px center no-repeat;
+      color: ${tokens.colors.text};
+      box-shadow: ${tokens.shadows.input};
+      transition: all 0.15s;
+    }
+
+    .stacks-search-input:focus {
+      box-shadow: ${tokens.shadows.inputFocus};
+      border-color: ${tokens.colors.accentCyan};
+      transform: translate(-1px, -1px);
     }
 
     .stacks-search-input::placeholder {
-      color: #999;
+      color: ${tokens.colors.textTertiary};
     }
 
+    /* ============================================
+       CHIPS
+       ============================================ */
     .stacks-chips {
       display: flex;
       flex-wrap: wrap;
@@ -245,33 +601,44 @@
     }
 
     .stacks-chip {
-      padding: 10px 18px;
-      background: white;
-      border: 2px solid #1a1a1a;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
+      padding: 10px 16px;
+      background: ${tokens.colors.secondary};
+      border: 3px solid ${tokens.colors.border};
+      border-radius: 10px;
+      font-family: 'Unbounded', system-ui, sans-serif;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: -0.025em;
+      text-transform: uppercase;
+      color: ${tokens.colors.text};
       cursor: pointer;
+      box-shadow: ${tokens.shadows.badge};
       transition: all 0.15s;
     }
 
     .stacks-chip:hover {
-      background: #1a1a1a;
-      color: white;
+      transform: translate(1px, -1px);
+      box-shadow: ${tokens.shadows.button};
     }
 
-    /* Results State */
+    .stacks-chip:active {
+      transform: translate(-1px, 1px);
+      box-shadow: -2px 2px 0 0 ${tokens.colors.border};
+    }
+
+    /* ============================================
+       RESULTS VIEW
+       ============================================ */
     .stacks-results {
       display: none;
     }
 
-    .stacks-widget.results .stacks-results {
+    .stacks-modal.results .stacks-results {
       display: block;
     }
 
-    .stacks-widget.results .stacks-header,
-    .stacks-widget.results .stacks-chips {
+    .stacks-modal.results .stacks-header,
+    .stacks-modal.results .stacks-chips {
       display: none;
     }
 
@@ -283,52 +650,69 @@
     }
 
     .stacks-back-btn {
-      background: none;
-      border: none;
+      background: ${tokens.colors.secondary};
+      border: 3px solid ${tokens.colors.border};
+      border-radius: 10px;
+      width: 40px;
+      height: 40px;
       font-size: 20px;
+      font-weight: 900;
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 4px;
+      color: ${tokens.colors.text};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: ${tokens.shadows.badge};
+      transition: all 0.15s;
     }
 
     .stacks-back-btn:hover {
-      background: #e0e0e0;
+      transform: translate(1px, -1px);
+      box-shadow: ${tokens.shadows.button};
     }
 
     .stacks-results-title {
+      font-family: 'Unbounded', system-ui, sans-serif;
       font-size: 22px;
-      font-weight: 700;
-      color: #1a1a1a;
+      font-weight: 900;
+      letter-spacing: -0.025em;
+      text-transform: uppercase;
+      color: ${tokens.colors.text};
     }
 
     .stacks-results-query {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       font-size: 14px;
-      color: #666;
-      margin-bottom: 12px;
+      font-weight: 600;
+      color: ${tokens.colors.textSecondary};
+      margin-bottom: 8px;
     }
 
     .stacks-results-scroll {
-      max-height: 480px;
+      max-height: 55vh;
       overflow-y: auto;
       padding-right: 8px;
     }
 
     .stacks-results-scroll::-webkit-scrollbar {
-      width: 6px;
+      width: 8px;
     }
 
     .stacks-results-scroll::-webkit-scrollbar-track {
-      background: #eee;
-      border-radius: 3px;
+      background: ${tokens.colors.background};
+      border-radius: 4px;
     }
 
     .stacks-results-scroll::-webkit-scrollbar-thumb {
-      background: #ccc;
-      border-radius: 3px;
+      background: ${tokens.colors.border};
+      border-radius: 4px;
     }
 
+    /* ============================================
+       CATEGORY SECTIONS
+       ============================================ */
     .stacks-category {
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
 
     .stacks-category-header {
@@ -339,14 +723,16 @@
     }
 
     .stacks-category-icon {
-      font-size: 18px;
+      font-size: 22px;
     }
 
     .stacks-category-title {
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      color: #1a1a1a;
+      font-family: 'Unbounded', system-ui, sans-serif;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.025em;
+      text-transform: uppercase;
+      color: ${tokens.colors.text};
     }
 
     .stacks-category-tags {
@@ -357,42 +743,110 @@
     }
 
     .stacks-tag {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       padding: 6px 12px;
-      background: #1a1a1a;
       color: white;
-      border-radius: 4px;
+      border: 2px solid ${tokens.colors.border};
+      border-radius: 6px;
       font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
     }
 
+    .stacks-tag.atmosphere {
+      background: ${tokens.colors.accentCyan};
+    }
+
+    .stacks-tag.characters {
+      background: ${tokens.colors.accentPurple};
+    }
+
+    .stacks-tag.plot {
+      background: ${tokens.colors.accentCoral};
+    }
+
+    /* Topic intent lanes */
+    .stacks-tag.foundational {
+      background: #1e3a5f;
+    }
+
+    .stacks-tag.narrative {
+      background: #7c3aed;
+    }
+
+    .stacks-tag.start-here {
+      background: #059669;
+    }
+
+    /* Badge styles */
+    .stacks-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: ${tokens.colors.accentYellow};
+      color: ${tokens.colors.text};
+      border: 2px solid ${tokens.colors.border};
+      border-radius: 6px;
+      font-size: 8px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .stacks-badge.mayas-pick {
+      background: #fbbf24;
+    }
+
+    .stacks-badge.neighborhood-favorite {
+      background: #f472b6;
+      color: white;
+    }
+
+    .stacks-badge.author-coming {
+      background: #34d399;
+    }
+
+    /* ============================================
+       BOOK CARDS
+       ============================================ */
     .stacks-books {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+      gap: 14px;
     }
 
     .stacks-book {
       display: flex;
-      gap: 14px;
-      padding: 14px;
-      background: white;
-      border: 2px solid #e0e0e0;
-      border-radius: 10px;
-      transition: border-color 0.15s;
+      gap: 12px;
+      padding: 12px;
+      background: ${tokens.colors.secondary};
+      border: 3px solid ${tokens.colors.border};
+      border-radius: 14px;
+      box-shadow: ${tokens.shadows.card};
+      transition: all 0.15s;
+      cursor: pointer;
     }
 
     .stacks-book:hover {
-      border-color: #1a1a1a;
+      transform: translate(-0.5px, -0.5px);
+      box-shadow: ${tokens.shadows.hover};
+    }
+
+    .stacks-book:active {
+      transform: translate(0, 0);
+      box-shadow: ${tokens.shadows.badge};
     }
 
     .stacks-book-cover {
-      width: 70px;
-      height: 105px;
+      width: 65px;
+      height: 98px;
       object-fit: cover;
-      border-radius: 4px;
+      border: 2px solid ${tokens.colors.border};
+      border-radius: 6px;
       flex-shrink: 0;
-      background: #eee;
+      background: #E8E0D8;
     }
 
     .stacks-book-info {
@@ -401,26 +855,33 @@
     }
 
     .stacks-book-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #1a1a1a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      font-weight: 900;
+      color: ${tokens.colors.text};
       margin: 0 0 2px 0;
-      white-space: nowrap;
+      line-height: 1.25;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
       overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .stacks-book-author {
-      font-size: 13px;
-      color: #666;
-      margin: 0 0 8px 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: ${tokens.colors.textSecondary};
+      margin: 0 0 6px 0;
     }
 
     .stacks-book-desc {
-      font-size: 12px;
-      color: #555;
-      line-height: 1.4;
-      margin: 0 0 10px 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      color: ${tokens.colors.textTertiary};
+      line-height: 1.45;
+      margin: 0 0 8px 0;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -430,14 +891,21 @@
     .stacks-book-meta {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
     .stacks-stock {
-      padding: 4px 10px;
-      border-radius: 4px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 4px 8px;
+      border: 2px solid ${tokens.colors.border};
+      border-radius: 6px;
       font-size: 10px;
-      font-weight: 700;
+      font-weight: 900;
+      text-transform: uppercase;
     }
 
     .stacks-stock.in-stock {
@@ -446,123 +914,88 @@
     }
 
     .stacks-stock.can-order {
-      background: #f59e0b;
-      color: white;
+      background: ${tokens.colors.accentYellow};
+      color: ${tokens.colors.text};
     }
 
     .stacks-match {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       padding: 4px 8px;
-      background: #1a1a1a;
+      background: ${tokens.colors.accentPurple};
       color: white;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 700;
+      border: 2px solid ${tokens.colors.border};
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
     }
 
     .stacks-pages {
-      font-size: 11px;
-      color: #999;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      color: ${tokens.colors.textTertiary};
+      text-transform: uppercase;
+      margin-left: auto;
     }
   `;
-  document.head.appendChild(styles);
 
   // ============================================
-  // CREATE WIDGET HTML
+  // CREATE SHADOW DOM HOST FOR TRIGGER
   // ============================================
-  const widget = document.createElement('div');
-  widget.className = 'stacks-widget collapsed';
-  widget.id = 'stacks-widget';
+  const triggerHost = document.createElement('div');
+  triggerHost.id = 'stacks-trigger-host';
+  const triggerShadow = triggerHost.attachShadow({ mode: 'open' });
 
-  widget.innerHTML = `
-    <div class="stacks-inner">
-      <!-- Collapsed State -->
-      <div class="stacks-collapsed-bar">
-        <div class="stacks-brand">
-          <span class="stacks-title">DISCOVER</span>
-          <span class="stacks-powered">Powered by <strong>STACKS</strong></span>
-        </div>
-        <input type="text" placeholder="try: 'books like Succession the show'" id="stacks-collapsed-input">
-      </div>
+  // Clone styles for trigger shadow
+  const triggerStyles = styles.cloneNode(true);
+  triggerShadow.appendChild(triggerStyles);
 
-      <!-- Expanded State -->
-      <div class="stacks-expanded">
-        <div class="stacks-header">
-          <div class="stacks-header-left">
-            <h2 class="title">DISCOVER</h2>
-            <p class="powered">Powered by <strong>STACKS</strong></p>
-          </div>
-          <div class="stacks-header-right">
-            Describe what you're in the mood for—a vibe, a feeling, or even a movie you love—and we'll find the perfect book.
-          </div>
-        </div>
-
-        <div class="stacks-search-row">
-          <input type="text" class="stacks-search-input" placeholder="try: 'dark academia vibes'" id="stacks-main-input">
-        </div>
-
-        <div class="stacks-chips">
-          <button class="stacks-chip">DARK ACADEMIA</button>
-          <button class="stacks-chip">COZY FANTASY</button>
-          <button class="stacks-chip">ROMANTASY</button>
-          <button class="stacks-chip">ENEMIES TO LOVERS</button>
-          <button class="stacks-chip">FOUND FAMILY</button>
-        </div>
-
-        <!-- Results -->
-        <div class="stacks-results">
-          <div class="stacks-results-header">
-            <button class="stacks-back-btn" id="stacks-back">←</button>
-            <span class="stacks-results-title">Search Results</span>
-          </div>
-          <div class="stacks-results-query">"${MOCK_RESULTS.query}"</div>
-
-          <div class="stacks-results-scroll" id="stacks-results-container">
-            <!-- Atmosphere -->
-            <div class="stacks-category">
-              <div class="stacks-category-header">
-                <span class="stacks-category-icon">💥</span>
-                <span class="stacks-category-title">ATMOSPHERE</span>
-              </div>
-              <div class="stacks-category-tags">
-                ${MOCK_RESULTS.atmosphere.tags.map(t => `<span class="stacks-tag">${t}</span>`).join('')}
-              </div>
-              <div class="stacks-books">
-                ${MOCK_RESULTS.atmosphere.books.map(book => renderBook(book)).join('')}
-              </div>
-            </div>
-
-            <!-- Characters -->
-            <div class="stacks-category">
-              <div class="stacks-category-header">
-                <span class="stacks-category-icon">✍️</span>
-                <span class="stacks-category-title">CHARACTERS</span>
-              </div>
-              <div class="stacks-category-tags">
-                ${MOCK_RESULTS.characters.tags.map(t => `<span class="stacks-tag">${t}</span>`).join('')}
-              </div>
-              <div class="stacks-books">
-                ${MOCK_RESULTS.characters.books.map(book => renderBook(book)).join('')}
-              </div>
-            </div>
-
-            <!-- Plot -->
-            <div class="stacks-category">
-              <div class="stacks-category-header">
-                <span class="stacks-category-icon">📖</span>
-                <span class="stacks-category-title">PLOT</span>
-              </div>
-              <div class="stacks-category-tags">
-                ${MOCK_RESULTS.plot.tags.map(t => `<span class="stacks-tag">${t}</span>`).join('')}
-              </div>
-              <div class="stacks-books">
-                ${MOCK_RESULTS.plot.books.map(book => renderBook(book)).join('')}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  // Create trigger bar
+  const triggerBar = document.createElement('div');
+  triggerBar.className = 'stacks-trigger';
+  triggerBar.innerHTML = `
+    <div class="stacks-brand">
+      <span class="stacks-title">DISCOVER</span>
+      <span class="stacks-powered">Powered by <strong>STACKS</strong></span>
     </div>
+    <input type="text" class="stacks-trigger-input" placeholder="try: 'books like Succession the show'" readonly id="stacks-trigger-input">
   `;
+  triggerShadow.appendChild(triggerBar);
+
+  // ============================================
+  // CREATE SHADOW DOM HOST FOR MODAL
+  // ============================================
+  const modalHost = document.createElement('div');
+  modalHost.id = 'stacks-modal-host';
+  modalHost.style.cssText = 'position: fixed; top: 0; left: 0; width: 0; height: 0; z-index: 99998;';
+  const modalShadow = modalHost.attachShadow({ mode: 'open' });
+
+  // Clone styles for modal shadow
+  const modalStyles = styles.cloneNode(true);
+  modalShadow.appendChild(modalStyles);
+
+  // Create backdrop
+  const backdrop = document.createElement('div');
+  backdrop.className = 'stacks-backdrop';
+  backdrop.id = 'stacks-backdrop';
+  modalShadow.appendChild(backdrop);
+
+  // Create modal
+  const modal = document.createElement('div');
+  modal.className = 'stacks-modal';
+  modal.id = 'stacks-modal';
+
+  function getBadgeHtml(badge) {
+    if (!badge) return '';
+    const badges = {
+      'mayas_pick': { icon: '⭐', label: "Maya's Pick", class: 'mayas-pick' },
+      'neighborhood_favorite': { icon: '🏘️', label: 'Neighborhood Favorite', class: 'neighborhood-favorite' },
+      'author_coming': { icon: '✍️', label: 'Author Coming', class: 'author-coming' }
+    };
+    const b = badges[badge];
+    return b ? `<span class="stacks-badge ${b.class}">${b.icon} ${b.label}</span>` : '';
+  }
 
   function renderBook(book) {
     return `
@@ -571,8 +1004,9 @@
         <div class="stacks-book-info">
           <h4 class="stacks-book-title">${book.title}</h4>
           <p class="stacks-book-author">${book.author}</p>
-          <p class="stacks-book-desc">${book.description}</p>
+          <p class="stacks-book-desc">${book.rationale || book.description}</p>
           <div class="stacks-book-meta">
+            ${getBadgeHtml(book.badge)}
             <span class="stacks-stock ${book.inStock ? 'in-stock' : 'can-order'}">${book.inStock ? '✓ IN STOCK' : '⊕ CAN ORDER'}</span>
             <span class="stacks-match">${book.match}%</span>
             <span class="stacks-pages">${book.pages}p</span>
@@ -582,53 +1016,171 @@
     `;
   }
 
+  function renderResults(data) {
+    return data.lanes.map(lane => `
+      <div class="stacks-category">
+        <div class="stacks-category-header">
+          <span class="stacks-category-icon">${lane.icon}</span>
+          <span class="stacks-category-title">${lane.name.toUpperCase()}</span>
+        </div>
+        <div class="stacks-category-tags">
+          ${lane.tags.map(t => `<span class="stacks-tag ${lane.type}">${t}</span>`).join('')}
+        </div>
+        <div class="stacks-books">
+          ${lane.books.map(book => renderBook(book)).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  modal.innerHTML = `
+    <div class="stacks-modal-inner">
+      <!-- Header -->
+      <div class="stacks-header">
+        <div class="stacks-header-left">
+          <h2 class="title">DISCOVER</h2>
+          <p class="powered">Powered by <strong>STACKS</strong></p>
+        </div>
+        <div class="stacks-header-right">
+          Describe what you're in the mood for—a vibe, a feeling, or even a movie you love—and we'll find the perfect book.
+        </div>
+        <button class="stacks-close-btn" id="stacks-close">×</button>
+      </div>
+
+      <!-- Search -->
+      <div class="stacks-search-row">
+        <input type="text" class="stacks-search-input" placeholder="try: 'books like Succession the show'" id="stacks-main-input">
+      </div>
+
+      <!-- Chips -->
+      <div class="stacks-chips">
+        <button class="stacks-chip" data-query="ancient egypt">ANCIENT EGYPT</button>
+        <button class="stacks-chip">DARK ACADEMIA</button>
+        <button class="stacks-chip">COZY FANTASY</button>
+        <button class="stacks-chip">ENEMIES TO LOVERS</button>
+        <button class="stacks-chip">BEACH READ</button>
+        <button class="stacks-chip">FOUND FAMILY</button>
+        <button class="stacks-chip">ROMANTASY</button>
+        <button class="stacks-chip">HEIST STORY</button>
+      </div>
+
+      <!-- Results -->
+      <div class="stacks-results">
+        <div class="stacks-results-header">
+          <button class="stacks-back-btn" id="stacks-back">←</button>
+          <span class="stacks-results-title">Search Results</span>
+        </div>
+        <div class="stacks-results-query" id="stacks-query-display"></div>
+        <div class="stacks-results-understanding" id="stacks-understanding" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; font-size: 13px; font-weight: 500; color: #6B6B6B; margin-bottom: 20px; font-style: italic;"></div>
+        <div class="stacks-results-scroll" id="stacks-results-container"></div>
+      </div>
+    </div>
+  `;
+
+  modalShadow.appendChild(modal);
+
   // ============================================
-  // INJECT INTO PAGE - Replace their search bar
+  // INJECT INTO PAGE
   // ============================================
-  // Find their search form containing input[type="search"]
+  // Find their search form and replace with trigger
   const searchInput = document.querySelector('input[type="search"]');
   const searchForm = searchInput?.closest('form');
 
   if (searchForm) {
-    // Hide their search form and insert STACKS in its place
     searchForm.style.display = 'none';
-    searchForm.insertAdjacentElement('afterend', widget);
-    console.log('✅ Replaced their search form with STACKS widget');
+    searchForm.insertAdjacentElement('afterend', triggerHost);
+    console.log('✅ Replaced search form with STACKS trigger bar');
   } else {
-    // Fallback: try to find header and inject after
     const header = document.querySelector('header') ||
                    document.querySelector('.site-header') ||
                    document.querySelector('nav')?.parentElement;
 
     if (header) {
-      header.insertAdjacentElement('afterend', widget);
-      console.log('⚠️ Could not find search form, injected after header');
+      header.insertAdjacentElement('afterend', triggerHost);
+      console.log('⚠️ Could not find search form, injected trigger after header');
     } else {
-      document.body.insertBefore(widget, document.body.firstChild);
-      console.log('⚠️ Fallback: injected at top of body');
+      document.body.insertBefore(triggerHost, document.body.firstChild);
+      console.log('⚠️ Fallback: injected trigger at top of body');
     }
   }
+
+  // Add modal host to body
+  document.body.appendChild(modalHost);
 
   // ============================================
   // EVENT HANDLERS
   // ============================================
-  const collapsedInput = document.getElementById('stacks-collapsed-input');
-  const mainInput = document.getElementById('stacks-main-input');
-  const backBtn = document.getElementById('stacks-back');
-  const chips = widget.querySelectorAll('.stacks-chip');
+  const triggerInput = triggerShadow.getElementById('stacks-trigger-input');
+  const mainInput = modalShadow.getElementById('stacks-main-input');
+  const closeBtn = modalShadow.getElementById('stacks-close');
+  const backBtn = modalShadow.getElementById('stacks-back');
+  const chips = modalShadow.querySelectorAll('.stacks-chip');
+  const resultsContainer = modalShadow.getElementById('stacks-results-container');
+  const queryDisplay = modalShadow.getElementById('stacks-query-display');
+  const understandingDisplay = modalShadow.getElementById('stacks-understanding');
 
-  // Expand on collapsed input focus
-  collapsedInput.addEventListener('focus', () => {
-    widget.classList.remove('collapsed');
-    widget.classList.add('expanded');
+  function openModal() {
+    backdrop.classList.add('open');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
     setTimeout(() => mainInput.focus(), 100);
+  }
+
+  function closeModal() {
+    backdrop.classList.remove('open');
+    modal.classList.remove('open');
+    modal.classList.remove('results');
+    document.body.style.overflow = '';
+    mainInput.value = '';
+  }
+
+  function showResults(data) {
+    queryDisplay.textContent = '"' + data.query + '"';
+    understandingDisplay.textContent = data.query_understanding;
+    resultsContainer.innerHTML = renderResults(data);
+    modal.classList.add('results');
+  }
+
+  function hideResults() {
+    modal.classList.remove('results');
+    mainInput.value = '';
+    mainInput.focus();
+  }
+
+  // Find mock data for a query
+  function findMockData(query) {
+    const q = query.toLowerCase().trim();
+    // Check for exact matches first
+    if (MOCK_DATA[q]) return MOCK_DATA[q];
+    // Check for partial matches
+    for (const key of Object.keys(MOCK_DATA)) {
+      if (q.includes(key) || key.includes(q)) {
+        return MOCK_DATA[key];
+      }
+    }
+    return null;
+  }
+
+  // Open modal on trigger click
+  triggerInput.addEventListener('click', openModal);
+  triggerInput.addEventListener('focus', openModal);
+
+  // Close modal
+  closeBtn.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', closeModal);
+
+  // Escape key closes modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) {
+      closeModal();
+    }
   });
 
   // Handle search
   function handleSearch(query) {
-    if (query.toLowerCase().includes('succession')) {
-      widget.classList.remove('expanded');
-      widget.classList.add('results');
+    const data = findMockData(query);
+    if (data) {
+      showResults(data);
     }
   }
 
@@ -638,30 +1190,19 @@
     }
   });
 
-  // Chip clicks
+  // Chip clicks - instant search
   chips.forEach(chip => {
     chip.addEventListener('click', () => {
-      mainInput.value = chip.textContent.toLowerCase();
-      // For demo, only "succession" query shows results
-      // But chips give the feel of the experience
+      const query = chip.dataset.query || chip.textContent.toLowerCase();
+      mainInput.value = query;
+      handleSearch(query);
     });
   });
 
   // Back button
-  backBtn.addEventListener('click', () => {
-    widget.classList.remove('results');
-    widget.classList.add('expanded');
-    mainInput.value = '';
-    mainInput.focus();
-  });
+  backBtn.addEventListener('click', hideResults);
 
-  // Click outside to collapse (optional)
-  document.addEventListener('click', (e) => {
-    if (!widget.contains(e.target) && !widget.classList.contains('results')) {
-      widget.classList.remove('expanded');
-      widget.classList.add('collapsed');
-    }
-  });
-
-  console.log('✅ STACKS Widget loaded! Click the search bar to expand.');
+  console.log('✅ STACKS Widget loaded!');
+  console.log('   Demo queries: "like succession" or "ancient egypt"');
+  console.log('   Click a chip to search instantly.');
 })();
