@@ -1140,6 +1140,7 @@
     queryDisplay.textContent = '"' + data.query + '"';
     understandingDisplay.textContent = data.query_understanding;
     resultsContainer.innerHTML = renderResults(data);
+    resultsContainer.scrollTop = 0;
     modal.classList.add('results');
   }
 
