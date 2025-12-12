@@ -649,6 +649,10 @@
       margin-bottom: 8px;
     }
 
+    .stacks-results-close {
+      margin-left: auto;
+    }
+
     .stacks-back-btn {
       background: ${tokens.colors.secondary};
       border: 3px solid ${tokens.colors.border};
@@ -1071,6 +1075,7 @@
         <div class="stacks-results-header">
           <button class="stacks-back-btn" id="stacks-back">←</button>
           <span class="stacks-results-title">Search Results</span>
+          <button class="stacks-close-btn stacks-results-close" id="stacks-results-close">×</button>
         </div>
         <div class="stacks-results-query" id="stacks-query-display"></div>
         <div class="stacks-results-understanding" id="stacks-understanding" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; font-size: 13px; font-weight: 500; color: #6B6B6B; margin-bottom: 20px; font-style: italic;"></div>
@@ -1115,6 +1120,7 @@
   const triggerInput = triggerShadow.getElementById('stacks-trigger-input');
   const mainInput = modalShadow.getElementById('stacks-main-input');
   const closeBtn = modalShadow.getElementById('stacks-close');
+  const resultsCloseBtn = modalShadow.getElementById('stacks-results-close');
   const backBtn = modalShadow.getElementById('stacks-back');
   const chips = modalShadow.querySelectorAll('.stacks-chip');
   const resultsContainer = modalShadow.getElementById('stacks-results-container');
@@ -1170,6 +1176,7 @@
 
   // Close modal
   closeBtn.addEventListener('click', closeModal);
+  resultsCloseBtn.addEventListener('click', closeModal);
   backdrop.addEventListener('click', closeModal);
 
   // Escape key closes modal
