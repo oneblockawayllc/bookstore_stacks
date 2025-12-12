@@ -627,6 +627,84 @@
     }
 
     /* ============================================
+       FIND YOUR NEXT READ SECTION
+       ============================================ */
+    .stacks-examples {
+      margin-top: 32px;
+      text-align: center;
+      padding-top: 24px;
+      border-top: 2px solid ${tokens.colors.border};
+    }
+
+    .stacks-examples-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .stacks-examples-title {
+      font-family: 'Unbounded', system-ui, sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      color: ${tokens.colors.text};
+      letter-spacing: -0.025em;
+      margin: 0 0 8px 0;
+    }
+
+    .stacks-examples-subtitle {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: ${tokens.colors.textSecondary};
+      margin: 0 0 24px 0;
+    }
+
+    .stacks-examples-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: ${tokens.colors.textTertiary};
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin: 0 0 12px 0;
+    }
+
+    .stacks-examples-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .stacks-example-btn {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      padding: 16px 20px;
+      background: ${tokens.colors.secondary};
+      border: 3px solid ${tokens.colors.border};
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 500;
+      color: ${tokens.colors.text};
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+    }
+
+    .stacks-example-btn:hover {
+      transform: translate(1px, -1px);
+      box-shadow: ${tokens.shadows.button};
+    }
+
+    .stacks-example-btn:active {
+      transform: translate(-1px, 1px);
+      box-shadow: none;
+    }
+
+    .stacks-modal.results .stacks-examples {
+      display: none;
+    }
+
+    /* ============================================
        RESULTS VIEW
        ============================================ */
     .stacks-results {
@@ -1058,16 +1136,26 @@
         <input type="text" class="stacks-search-input" placeholder="try: 'books like Succession the show'" id="stacks-main-input">
       </div>
 
-      <!-- Chips -->
+      <!-- Chips - single row -->
       <div class="stacks-chips">
-        <button class="stacks-chip" data-query="ancient egypt">ANCIENT EGYPT</button>
         <button class="stacks-chip">DARK ACADEMIA</button>
         <button class="stacks-chip">COZY FANTASY</button>
-        <button class="stacks-chip">ENEMIES TO LOVERS</button>
-        <button class="stacks-chip">BEACH READ</button>
-        <button class="stacks-chip">FOUND FAMILY</button>
         <button class="stacks-chip">ROMANTASY</button>
-        <button class="stacks-chip">HEIST STORY</button>
+        <button class="stacks-chip">ENEMIES TO LOVERS</button>
+      </div>
+
+      <!-- Find Your Next Read section -->
+      <div class="stacks-examples">
+        <div class="stacks-examples-icon">📚</div>
+        <h3 class="stacks-examples-title">FIND YOUR NEXT READ</h3>
+        <p class="stacks-examples-subtitle">Search for books using natural language or tap a vibe above</p>
+        <p class="stacks-examples-label">TRY THESE</p>
+        <div class="stacks-examples-grid">
+          <button class="stacks-example-btn" data-query="cozy fantasy with found family">"cozy fantasy with found family"</button>
+          <button class="stacks-example-btn" data-query="like Succession but a book">"like Succession but a book"</button>
+          <button class="stacks-example-btn" data-query="dark academia with secret societies">"dark academia with secret societies"</button>
+          <button class="stacks-example-btn" data-query="uplifting after a hard week">"uplifting after a hard week"</button>
+        </div>
       </div>
 
       <!-- Results -->
@@ -1204,6 +1292,16 @@
   chips.forEach(chip => {
     chip.addEventListener('click', () => {
       const query = chip.dataset.query || chip.textContent.toLowerCase();
+      mainInput.value = query;
+      handleSearch(query);
+    });
+  });
+
+  // Example buttons
+  const exampleBtns = modalShadow.querySelectorAll('.stacks-example-btn');
+  exampleBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const query = btn.dataset.query;
       mainInput.value = query;
       handleSearch(query);
     });
