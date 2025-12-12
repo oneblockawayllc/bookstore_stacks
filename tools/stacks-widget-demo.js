@@ -492,13 +492,15 @@
       align-items: flex-start;
       gap: 24px;
       margin-bottom: 24px;
-      position: relative;
+    }
+
+    .stacks-header-left {
+      flex-shrink: 0;
     }
 
     .stacks-close-btn {
-      position: absolute;
-      top: 0;
-      right: 0;
+      flex-shrink: 0;
+      margin-left: auto;
       background: ${tokens.colors.secondary};
       border: 3px solid ${tokens.colors.border};
       border-radius: 12px;
@@ -518,10 +520,6 @@
     .stacks-close-btn:hover {
       transform: translate(1px, -1px);
       box-shadow: ${tokens.shadows.button};
-    }
-
-    .stacks-header-left {
-      flex-shrink: 0;
     }
 
     .stacks-header-left .title {
@@ -552,12 +550,12 @@
     }
 
     .stacks-header-right {
+      flex: 1;
       padding-top: 6px;
       font-size: 14px;
       font-weight: 600;
       color: ${tokens.colors.textSecondary};
       line-height: 1.5;
-      max-width: 380px;
     }
 
     /* ============================================
