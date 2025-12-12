@@ -815,6 +815,7 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 14px;
+      padding-left: 10px;
     }
 
     .stacks-book {
