@@ -22,7 +22,7 @@
           {
             title: "The Nest",
             author: "Cynthia D'Aprix Sweeney",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1451446136i/28220826.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780062414229-L.jpg",
             description: "Four adult siblings await their inheritance while secrets and betrayals threaten to tear the family apart.",
             rationale: "Captures the same wealthy-family-imploding energy you loved in Succession. The siblings circle their inheritance like sharks, and every conversation drips with passive aggression.",
             inStock: true,
@@ -33,7 +33,7 @@
           {
             title: "Trust",
             author: "Hernan Diaz",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1635095454i/59808603.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780593420317-L.jpg",
             description: "A wealthy financier's legacy unravels through competing narratives of power, money, and manipulation.",
             rationale: "The old-money Manhattan atmosphere you're after, but told through unreliable narrators fighting over whose version of events is true. It's Succession meets Rashomon.",
             inStock: true,
@@ -51,7 +51,7 @@
           {
             title: "The House of Mirth",
             author: "Edith Wharton",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1564063693i/17728.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780140187298-L.jpg",
             description: "A beautiful woman navigates New York high society's treacherous waters where wealth determines worth.",
             rationale: "Lily Bart is the Shiv Roy of the 1900s—brilliant, trapped by her world's rules, making devastating choices. The society is just as cutthroat, the falls just as hard.",
             inStock: false,
@@ -62,7 +62,7 @@
           {
             title: "The Bonfire of the Vanities",
             author: "Tom Wolfe",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1388200270i/2684.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780312427573-L.jpg",
             description: "A Wall Street bond trader's life implodes in this savage satire of greed, class, and ambition.",
             rationale: "Sherman McCoy is what happens when a Waystar exec gets caught. Same savage takedown of the ultra-wealthy, same dark comedy as everyone scrambles to save themselves.",
             inStock: true,
@@ -80,7 +80,7 @@
           {
             title: "A Little Life",
             author: "Hanya Yanagihara",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1446469353i/22822858.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780804172707-L.jpg",
             description: "Four friends navigate ambition, success, and devastating secrets in New York City.",
             rationale: "The found-family dynamics and New York ambition you want, but even more emotionally devastating. If Succession made you feel things, this will wreck you.",
             inStock: true,
@@ -90,7 +90,7 @@
           {
             title: "The Corrections",
             author: "Jonathan Franzen",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1355011305i/3805.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780312421274-L.jpg",
             description: "A dysfunctional Midwestern family confronts their failures as they gather for one last Christmas.",
             rationale: "Same family-as-battlefield structure—everyone has an agenda, everyone's keeping score. The Lamberts are the Roys without the billions, which somehow makes it worse.",
             inStock: true,
@@ -118,7 +118,7 @@
           {
             title: "The Oxford History of Ancient Egypt",
             author: "Ian Shaw",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1348902666i/580057.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780192804587-L.jpg",
             description: "The definitive single-volume history covering 3,000 years from prehistory to the Roman conquest.",
             rationale: "The authoritative starting point you need—covers every dynasty from leading Egyptologists. Dense but accessible, it's the foundation scholars build on.",
             inStock: true,
@@ -129,7 +129,7 @@
           {
             title: "The Rise and Fall of Ancient Egypt",
             author: "Toby Wilkinson",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320518498i/6981605.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780553384901-L.jpg",
             description: "A sweeping narrative of Egyptian civilization from its origins to Cleopatra's death.",
             rationale: "Balances scholarship with storytelling—you'll understand the politics, power struggles, and personalities that shaped 3,000 years of civilization.",
             inStock: true,
@@ -147,7 +147,7 @@
           {
             title: "The Discovery of the Tomb of Tutankhamen",
             author: "Howard Carter",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320519789i/91919.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9781906251109-L.jpg",
             description: "The archaeologist's own account of finding the most famous tomb in history.",
             rationale: "First-person account of THE discovery—opening the sealed door, seeing gold glinting in candlelight. History doesn't get more thrilling than this.",
             inStock: false,
@@ -158,7 +158,7 @@
           {
             title: "Cleopatra: A Life",
             author: "Stacy Schiff",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1348903337i/7968243.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780316001922-L.jpg",
             description: "Pulitzer Prize-winning biography separating the real Cleopatra from myth and Hollywood.",
             rationale: "Reads like a thriller about the most famous woman in antiquity. You wanted Egypt's story—this is its dramatic finale through an unforgettable character.",
             inStock: true,
@@ -176,7 +176,7 @@
           {
             title: "Red Land, Black Land",
             author: "Barbara Mertz",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320468043i/93387.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780061252747-L.jpg",
             description: "Daily life in ancient Egypt—what people ate, wore, believed, and feared.",
             rationale: "Forget pharaohs for a moment—this is about regular Egyptians. Witty, warm, and makes the ancient world feel human. Perfect entry point.",
             inStock: true,
@@ -186,7 +186,7 @@
           {
             title: "Temples, Tombs and Hieroglyphs",
             author: "Barbara Mertz",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320468017i/93388.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780061252778-L.jpg",
             description: "A popular history of ancient Egypt told with wit and scholarly depth.",
             rationale: "Barbara Mertz (who also wrote mysteries as Elizabeth Peters) makes Egyptology genuinely fun. You'll learn the history without it feeling like homework.",
             inStock: true,
@@ -214,7 +214,7 @@
           {
             title: "The Egyptian",
             author: "Mika Waltari",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1388246873i/77131.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9781556524417-L.jpg",
             description: "A physician's journey through ancient Egypt during the reign of Akhenaten.",
             rationale: "The definitive ancient Egypt novel—lush, epic, and deeply immersive. You'll smell the incense and feel the sand.",
             inStock: true,
@@ -225,7 +225,7 @@
           {
             title: "River God",
             author: "Wilbur Smith",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1392818310i/43164.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780312106126-L.jpg",
             description: "An epic tale of ancient Egypt told through the eyes of a slave.",
             rationale: "Adventure, intrigue, and Egyptian grandeur. Smith makes the ancient world pulse with life and danger.",
             inStock: true,
@@ -243,7 +243,7 @@
           {
             title: "Nefertiti",
             author: "Michelle Moran",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320519059i/52952.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780307381743-L.jpg",
             description: "The story of Egypt's most beautiful queen, told by her sister.",
             rationale: "Palace intrigue, sibling rivalry, and a queen who changed history. Moran brings Nefertiti to vivid, complicated life.",
             inStock: true,
@@ -254,7 +254,7 @@
           {
             title: "Cleopatra's Daughter",
             author: "Michelle Moran",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320519829i/3319238.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780307409133-L.jpg",
             description: "The forgotten story of Cleopatra's twin children after their mother's death.",
             rationale: "What happened to Cleopatra's kids? This gripping novel follows them to Rome as captives of Augustus.",
             inStock: false,
@@ -272,7 +272,7 @@
           {
             title: "Crocodile on the Sandbank",
             author: "Elizabeth Peters",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1388760952i/405148.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9781455572359-L.jpg",
             description: "Victorian Egyptologist Amelia Peabody encounters mystery and romance in Egypt.",
             rationale: "Part mystery, part adventure, entirely delightful. Amelia Peabody is the witty heroine you didn't know you needed.",
             inStock: true,
@@ -283,7 +283,7 @@
           {
             title: "The Mask of Ra",
             author: "Paul Doherty",
-            cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1320519479i/79180.jpg",
+            cover: "https://covers.openlibrary.org/b/isbn/9780747259725-L.jpg",
             description: "A judge investigates murders in the court of Pharaoh Hatusu.",
             rationale: "Ancient Egypt meets murder mystery. If you want plot twists with your pyramids, start here.",
             inStock: true,
