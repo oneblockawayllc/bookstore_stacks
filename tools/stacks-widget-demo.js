@@ -827,6 +827,7 @@
       box-shadow: ${tokens.shadows.card};
       transition: all 0.15s;
       cursor: pointer;
+      overflow: hidden;
     }
 
     .stacks-book:hover {
