@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animation Test - Position Thumbnails</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #F4EFEA;
+      --secondary: #FFFFFF;
+      --text: #383838;
+      --text-secondary: #6B6B6B;
+      --border: #383838;
+      --accent-cyan: #6FC2FF;
+      --accent-yellow: #EAC435;
+      --accent-coral: #FF7169;
+      --accent-teal: #53DBC9;
+      --accent-purple: #667eea;
+      --shadow-color: 56, 56, 56;
+
+      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--primary);
+      color: var(--text);
+      padding: 40px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-family: 'Unbounded', system-ui, sans-serif;
+      font-size: 2rem;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      max-width: 1200px;
+    }
+
+    .card {
+      background: var(--secondary);
+      border: 4px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: -8px 8px 0 0 rgba(var(--shadow-color), 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-label {
+      padding: 16px 20px;
+      font-family: 'Unbounded', system-ui, sans-serif;
+      font-weight: 900;
+      font-size: 14px;
+      text-transform: uppercase;
+      border-bottom: 3px solid var(--border);
+      background: var(--primary);
+    }
+
+    /* ===== SHARED FAKE PAGE STYLES ===== */
+    .fake-page {
+      background: #fafafa;
+      min-height: 320px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fake-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-bottom: 2px solid var(--border);
+      background: var(--secondary);
+      position: relative;
+      z-index: 10;
+    }
+
+    .fake-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 900;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    .fake-logo-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--accent-purple);
+      border: 2px solid var(--border);
+      border-radius: 4px;
+    }
+
+    .fake-nav {
+      display: flex;
+      gap: 16px;
+    }
+
+    .fake-nav-item {
+      width: 50px;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+    }
+
+    /* ===== ANIMATION 1: SEARCH BAR ===== */
+    .search-bar-mockup {
+      position: relative;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8f4f8 100%);
+    }
+
+    .search-bar-mockup .state-search {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      transition: opacity 0.5s var(--ease-smooth);
+    }
+
+    .search-bar-mockup .state-results-page {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      transition: opacity 0.5s var(--ease-smooth);
+      background: #fafafa;
+    }
+
+    .search-bar-mockup .state-results-page {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .search-bar-mockup .search-sticky-area {
+      padding: 12px 16px;
+      background: var(--secondary);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .search-bar-mockup .try-examples {
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .search-bar-mockup .try-label {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-right: 4px;
+    }
+
+    .search-bar-mockup .try-example {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 2px;
+      background: var(--accent-yellow);
+      padding: 4px 8px;
+      border-radius: 100px;
+      border: 2px solid var(--border);
+    }
+
+    .search-bar-mockup .stacks-search-embed {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Skeleton Homepage */
+    .search-bar-mockup .skeleton-homepage {
+      flex: 1;
+      padding: 12px;
+      background: #fafafa;
+    }
+
+    .search-bar-mockup .skeleton-book-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .search-bar-mockup .skeleton-book {
+      aspect-ratio: 2/3;
+      background: linear-gradient(90deg, #e8e8e8 25%, #f4f4f4 50%, #e8e8e8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+      border: 2px solid #ddd;
+    }
+
+    .search-bar-mockup .search-input-wrapper {
+      flex: 1;
+      position: relative;
+      border: 3px solid var(--border);
+      border-radius: 8px;
+      background: var(--secondary);
+      overflow: hidden;
+    }
+
+    .search-bar-mockup .search-placeholder {
+      position: absolute;
+      inset: 0;
+      padding: 12px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #999;
+      font-style: italic;
+      transition: opacity 0.3s var(--ease-smooth);
+    }
+
+    .search-bar-mockup .search-typed {
+      position: absolute;
+      inset: 0;
+      padding: 12px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .search-bar-mockup .search-typed-text {
+      display: inline-block;
+      max-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      transition: max-width 1.8s steps(20, end);
+    }
+
+    .search-bar-mockup .search-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 14px;
+      background: var(--text);
+      margin-left: 1px;
+      vertical-align: middle;
+      animation: cursorBlink 0.6s infinite;
+    }
+
+    @keyframes cursorBlink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .search-bar-mockup .search-btn {
+      padding: 12px 16px;
+      background: var(--accent-cyan);
+      border: 3px solid var(--border);
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: -2px 2px 0 0 rgba(var(--shadow-color), 1);
+      transition: transform 0.3s var(--ease-smooth), box-shadow 0.3s var(--ease-smooth);
+    }
+
+    /* Results Page State */
+    .search-bar-mockup .results-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: var(--secondary);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .search-bar-mockup .results-back {
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .search-bar-mockup .results-title {
+      font-family: 'Unbounded', system-ui, sans-serif;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .search-bar-mockup .results-content {
+      flex: 1;
+      padding: 10px 12px;
+      overflow: hidden;
+    }
+
+    .search-bar-mockup .result-section {
+      margin-bottom: 8px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s var(--ease-out-expo), transform 0.4s var(--ease-out-expo);
+    }
+
+    .search-bar-mockup .result-section-header {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+
+    .search-bar-mockup .result-section-icon {
+      font-size: 10px;
+    }
+
+    .search-bar-mockup .result-section-title {
+      font-family: 'Unbounded', system-ui, sans-serif;
+      font-size: 9px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .search-bar-mockup .result-tags {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 5px;
+    }
+
+    .search-bar-mockup .result-tag {
+      padding: 2px 6px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      font-size: 7px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .search-bar-mockup .result-tag.cyan { background: var(--accent-cyan); }
+    .search-bar-mockup .result-tag.purple { background: var(--accent-purple); color: white; }
+    .search-bar-mockup .result-tag.coral { background: var(--accent-coral); color: white; }
+
+    .search-bar-mockup .skeleton-cards {
+      display: flex;
+      gap: 4px;
+    }
+
+    .search-bar-mockup .skeleton-card {
+      flex: 1;
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--secondary);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .search-bar-mockup .skeleton-cover {
+      width: 20px;
+      height: 30px;
+      background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 2px;
+      border: 1px solid #ccc;
+    }
+
+    .search-bar-mockup .skeleton-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .search-bar-mockup .skeleton-line {
+      height: 5px;
+      background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 2px;
+    }
+
+    .search-bar-mockup .skeleton-line.short { width: 60%; }
+    .search-bar-mockup .skeleton-line.shorter { width: 40%; }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Search Bar Animation States */
+    .search-bar-mockup[data-state="typing"] .search-placeholder {
+      opacity: 0;
+    }
+
+    .search-bar-mockup[data-state="typing"] .search-typed-text {
+      max-width: 200px;
+    }
+
+    .search-bar-mockup[data-state="results"] .state-search {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .search-bar-mockup[data-state="results"] .state-results-page {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .search-bar-mockup[data-state="results"] .result-section {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .search-bar-mockup[data-state="results"] .result-section:nth-child(1) { transition-delay: 0.15s; }
+    .search-bar-mockup[data-state="results"] .result-section:nth-child(2) { transition-delay: 0.3s; }
+    .search-bar-mockup[data-state="results"] .result-section:nth-child(3) { transition-delay: 0.45s; }
+
+    /* ===== ANIMATION 2: FAB / LITTLE HELPER ===== */
+    .fab-mockup .fake-hero-section {
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .fab-mockup .fake-headline {
+      width: 70%;
+      height: 14px;
+      background: var(--text);
+      border-radius: 4px;
+      margin: 0 auto 12px;
+    }
+
+    .fab-mockup .fake-subhead {
+      width: 50%;
+      height: 10px;
+      background: #c0c0c0;
+      border-radius: 4px;
+      margin: 0 auto;
+    }
+
+    .fab-mockup .fake-content-section {
+      padding: 20px;
+      flex: 1;
+    }
+
+    .fab-mockup .fake-text-line {
+      height: 10px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    .fab-mockup .fake-text-line:nth-child(1) { width: 100%; }
+    .fab-mockup .fake-text-line:nth-child(2) { width: 90%; }
+    .fab-mockup .fake-text-line:nth-child(3) { width: 95%; }
+    .fab-mockup .fake-text-line:nth-child(4) { width: 70%; }
+
+    .fab-mockup .fake-content-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .fab-mockup .fake-content-card {
+      aspect-ratio: 1;
+      background: #f0f0f0;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .fab-mockup .stacks-fab {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      width: 56px;
+      height: 56px;
+      background: var(--accent-purple);
+      border: 3px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: -4px 4px 0 0 rgba(var(--shadow-color), 1);
+      z-index: 20;
+      transition: all 0.5s var(--ease-out-expo);
+      cursor: pointer;
+    }
+
+    .fab-mockup .fab-icon {
+      transition: opacity 0.3s var(--ease-smooth), transform 0.3s var(--ease-smooth);
+    }
+
+    .fab-mockup .search-overlay {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      width: 56px;
+      height: 56px;
+      background: var(--secondary);
+      border: 3px solid var(--border);
+      border-radius: 28px;
+      box-shadow: -6px 6px 0 0 rgba(var(--shadow-color), 1);
+      z-index: 15;
+      overflow: hidden;
+      transition: all 0.5s var(--ease-out-expo);
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .fab-mockup .overlay-header {
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      opacity: 0;
+      transition: opacity 0.3s var(--ease-smooth) 0.2s;
+    }
+
+    .fab-mockup .overlay-title {
+      font-weight: 900;
+      font-size: 14px;
+      text-transform: uppercase;
+      font-family: 'Unbounded', system-ui, sans-serif;
+    }
+
+    .fab-mockup .overlay-close {
+      width: 24px;
+      height: 24px;
+      background: var(--accent-coral);
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .fab-mockup .overlay-content {
+      padding: 16px;
+      flex: 1;
+      opacity: 0;
+      transition: opacity 0.3s var(--ease-smooth) 0.3s;
+    }
+
+    .fab-mockup .overlay-search {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .fab-mockup .overlay-search input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    .fab-mockup .overlay-search button {
+      padding: 10px 14px;
+      background: var(--accent-cyan);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .fab-mockup .overlay-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .fab-mockup .overlay-chip {
+      padding: 5px 10px;
+      background: var(--accent-yellow);
+      border: 2px solid var(--border);
+      border-radius: 100px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    /* FAB Animation States */
+    .fab-mockup[data-state="open"] .stacks-fab {
+      transform: scale(0);
+      opacity: 0;
+    }
+
+    .fab-mockup[data-state="open"] .search-overlay {
+      width: calc(100% - 32px);
+      height: 200px;
+      bottom: 16px;
+      right: 16px;
+      border-radius: 16px;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .fab-mockup[data-state="open"] .overlay-header,
+    .fab-mockup[data-state="open"] .overlay-content {
+      opacity: 1;
+    }
+
+    /* ===== ANIMATION 3: DISCOVERY PAGE ===== */
+    .discover-mockup {
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8f4f8 100%);
+    }
+
+    .discover-mockup .fake-discover-page {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .discover-mockup .state-browse {
+      position: absolute;
+      inset: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      transition: opacity 0.5s var(--ease-smooth);
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8f4f8 100%);
+    }
+
+    .discover-mockup .fake-discover-title {
+      text-align: center;
+      font-weight: 900;
+      font-size: 16px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      font-family: 'Unbounded', system-ui, sans-serif;
+    }
+
+    .discover-mockup .fake-discover-search {
+      max-width: 240px;
+      margin: 0 auto 14px;
+    }
+
+    .discover-mockup .fake-discover-search input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 3px solid var(--border);
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      background: var(--secondary);
+    }
+
+    .discover-mockup .try-examples {
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .discover-mockup .try-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-right: 6px;
+    }
+
+    .discover-mockup .try-example {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 4px;
+      background: var(--accent-yellow);
+      padding: 5px 10px;
+      border-radius: 100px;
+      border: 2px solid var(--border);
+    }
+
+    .discover-mockup .try-example:not(:last-child)::after {
+      content: "·";
+      margin-left: 8px;
+      color: var(--text-secondary);
+      font-style: normal;
+    }
+
+    /* Discover Results Page State */
+    .discover-mockup .state-results-page {
+      position: absolute;
+      top: 46px; /* Below the fake-header */
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s var(--ease-smooth);
+      background: #fafafa;
+    }
+
+    .discover-mockup .results-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: var(--secondary);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .discover-mockup .results-back {
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .discover-mockup .results-title {
+      font-family: 'Unbounded', system-ui, sans-serif;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .discover-mockup .results-content {
+      flex: 1;
+      padding: 10px 12px;
+      overflow: hidden;
+    }
+
+    .discover-mockup .result-section {
+      margin-bottom: 8px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s var(--ease-out-expo), transform 0.4s var(--ease-out-expo);
+    }
+
+    .discover-mockup .result-section-header {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+
+    .discover-mockup .result-section-icon {
+      font-size: 10px;
+    }
+
+    .discover-mockup .result-section-title {
+      font-family: 'Unbounded', system-ui, sans-serif;
+      font-size: 9px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .discover-mockup .result-tags {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 5px;
+    }
+
+    .discover-mockup .result-tag {
+      padding: 2px 6px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      font-size: 7px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .discover-mockup .result-tag.cyan { background: var(--accent-cyan); }
+    .discover-mockup .result-tag.purple { background: var(--accent-purple); color: white; }
+    .discover-mockup .result-tag.coral { background: var(--accent-coral); color: white; }
+
+    .discover-mockup .skeleton-cards {
+      display: flex;
+      gap: 4px;
+    }
+
+    .discover-mockup .skeleton-card {
+      flex: 1;
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--secondary);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .discover-mockup .skeleton-cover {
+      width: 20px;
+      height: 30px;
+      background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 2px;
+      border: 1px solid #ccc;
+    }
+
+    .discover-mockup .skeleton-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .discover-mockup .skeleton-line {
+      height: 5px;
+      background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 2px;
+    }
+
+    .discover-mockup .skeleton-line.short { width: 60%; }
+
+    /* Discover Animation States */
+    .discover-mockup[data-state="results"] .state-browse {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .discover-mockup[data-state="results"] .state-results-page {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .discover-mockup[data-state="results"] .result-section {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .discover-mockup[data-state="results"] .result-section:nth-child(1) { transition-delay: 0.15s; }
+    .discover-mockup[data-state="results"] .result-section:nth-child(2) { transition-delay: 0.3s; }
+    .discover-mockup[data-state="results"] .result-section:nth-child(3) { transition-delay: 0.45s; }
+
+    /* Timing info */
+    .timing-info {
+      margin-top: 40px;
+      padding: 20px;
+      background: var(--secondary);
+      border: 3px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+    }
+
+    .timing-info h3 {
+      margin-bottom: 12px;
+      font-family: 'Unbounded', system-ui, sans-serif;
+    }
+
+    .timing-info ul {
+      margin-left: 20px;
+    }
+
+    .timing-info li {
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Animation Test</h1>
+
+  <div class="grid">
+    <!-- Animation 1: Search Bar -->
+    <div class="card">
+      <div class="card-label">The Search Bar</div>
+      <div class="fake-page search-bar-mockup" data-state="empty">
+        <!-- State: Search Page -->
+        <div class="state-search">
+          <div class="fake-header">
+            <div class="fake-logo">
+              <div class="fake-logo-icon"></div>
+              <span>Bookshop</span>
+            </div>
+            <div class="fake-nav">
+              <div class="fake-nav-item"></div>
+              <div class="fake-nav-item"></div>
+              <div class="fake-nav-item"></div>
+            </div>
+          </div>
+          <!-- Sticky Search Area -->
+          <div class="search-sticky-area">
+            <div class="stacks-search-embed">
+              <div class="search-input-wrapper">
+                <div class="search-placeholder">What are you in the mood for?</div>
+                <div class="search-typed">
+                  <span class="search-typed-text">books like the matrix</span><span class="search-cursor"></span>
+                </div>
+              </div>
+              <button class="search-btn">Go</button>
+            </div>
+            <div class="try-examples">
+              <span class="try-label">Try:</span>
+              <span class="try-example">rainy day read</span>
+              <span class="try-example">like The Bear</span>
+            </div>
+          </div>
+          <!-- Skeleton Homepage -->
+          <div class="skeleton-homepage">
+            <div class="skeleton-book-grid">
+              <div class="skeleton-book"></div>
+              <div class="skeleton-book"></div>
+              <div class="skeleton-book"></div>
+              <div class="skeleton-book"></div>
+              <div class="skeleton-book"></div>
+              <div class="skeleton-book"></div>
+              <div class="skeleton-book"></div>
+              <div class="skeleton-book"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- State: Results Page -->
+        <div class="state-results-page">
+          <div class="results-header">
+            <span class="results-back">←</span>
+            <span class="results-title">Search Results</span>
+          </div>
+          <div class="results-content">
+            <!-- Atmosphere Section -->
+            <div class="result-section">
+              <div class="result-section-header">
+                <span class="result-section-icon">🌟</span>
+                <span class="result-section-title">Atmosphere</span>
+              </div>
+              <div class="result-tags">
+                <span class="result-tag cyan">sci-fi</span>
+                <span class="result-tag cyan">romantic</span>
+              </div>
+              <div class="skeleton-cards">
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Characters Section -->
+            <div class="result-section">
+              <div class="result-section-header">
+                <span class="result-section-icon">💫</span>
+                <span class="result-section-title">Characters</span>
+              </div>
+              <div class="result-tags">
+                <span class="result-tag purple">rivals</span>
+                <span class="result-tag purple">tension</span>
+              </div>
+              <div class="skeleton-cards">
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Plot Section -->
+            <div class="result-section">
+              <div class="result-section-header">
+                <span class="result-section-icon">📖</span>
+                <span class="result-section-title">Plot</span>
+              </div>
+              <div class="result-tags">
+                <span class="result-tag coral">adventure</span>
+                <span class="result-tag coral">slow burn</span>
+              </div>
+              <div class="skeleton-cards">
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Animation 2: FAB / Little Helper -->
+    <div class="card">
+      <div class="card-label">The Little Helper</div>
+      <div class="fake-page fab-mockup" data-state="closed">
+        <div class="fake-header">
+          <div class="fake-logo">
+            <div class="fake-logo-icon"></div>
+            <span>Bookshop</span>
+          </div>
+          <div class="fake-nav">
+            <div class="fake-nav-item"></div>
+            <div class="fake-nav-item"></div>
+          </div>
+        </div>
+        <div class="fake-hero-section">
+          <div class="fake-headline"></div>
+          <div class="fake-subhead"></div>
+        </div>
+        <div class="fake-content-section">
+          <div class="fake-text-line"></div>
+          <div class="fake-text-line"></div>
+          <div class="fake-text-line"></div>
+          <div class="fake-text-line"></div>
+          <div class="fake-content-grid">
+            <div class="fake-content-card"></div>
+            <div class="fake-content-card"></div>
+            <div class="fake-content-card"></div>
+          </div>
+        </div>
+        <div class="stacks-fab">
+          <span class="fab-icon">📚</span>
+        </div>
+        <div class="search-overlay">
+          <div class="overlay-header">
+            <span class="overlay-title">Discover</span>
+            <div class="overlay-close">✕</div>
+          </div>
+          <div class="overlay-content">
+            <div class="overlay-search">
+              <input type="text" placeholder="What vibe are you feeling?" readonly>
+              <button>Go</button>
+            </div>
+            <div class="overlay-chips">
+              <span class="overlay-chip">cozy</span>
+              <span class="overlay-chip">thriller</span>
+              <span class="overlay-chip">romance</span>
+              <span class="overlay-chip">beach read</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Animation 3: Discovery Page -->
+    <div class="card">
+      <div class="card-label">The Discovery Page</div>
+      <div class="fake-page discover-mockup" data-state="browse">
+        <div class="fake-header">
+          <div class="fake-logo">
+            <div class="fake-logo-icon"></div>
+            <span>Bookshop</span>
+          </div>
+          <div class="fake-nav">
+            <div class="fake-nav-item"></div>
+            <div class="fake-nav-item"></div>
+          </div>
+        </div>
+        <div class="fake-discover-page">
+          <!-- Browse State -->
+          <div class="state-browse">
+            <div class="fake-discover-title">Discover</div>
+            <div class="fake-discover-search">
+              <input type="text" placeholder="What are you in the mood for?" readonly>
+            </div>
+            <div class="try-examples">
+              <span class="try-label">Try:</span>
+              <span class="try-example">"rainy day read"</span>
+              <span class="try-example">"like The Bear"</span>
+            </div>
+          </div>
+        </div>
+        <!-- Results Page State -->
+        <div class="state-results-page">
+          <div class="results-header">
+            <span class="results-back">←</span>
+            <span class="results-title">Search Results</span>
+          </div>
+          <div class="results-content">
+            <!-- Atmosphere Section -->
+            <div class="result-section">
+              <div class="result-section-header">
+                <span class="result-section-icon">🌟</span>
+                <span class="result-section-title">Atmosphere</span>
+              </div>
+              <div class="result-tags">
+                <span class="result-tag cyan">cozy</span>
+                <span class="result-tag cyan">warm</span>
+              </div>
+              <div class="skeleton-cards">
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Characters Section -->
+            <div class="result-section">
+              <div class="result-section-header">
+                <span class="result-section-icon">💫</span>
+                <span class="result-section-title">Characters</span>
+              </div>
+              <div class="result-tags">
+                <span class="result-tag purple">quirky</span>
+                <span class="result-tag purple">loveable</span>
+              </div>
+              <div class="skeleton-cards">
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Plot Section -->
+            <div class="result-section">
+              <div class="result-section-header">
+                <span class="result-section-icon">📖</span>
+                <span class="result-section-title">Plot</span>
+              </div>
+              <div class="result-tags">
+                <span class="result-tag coral">mystery</span>
+                <span class="result-tag coral">feel-good</span>
+              </div>
+              <div class="skeleton-cards">
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+                <div class="skeleton-card">
+                  <div class="skeleton-cover"></div>
+                  <div class="skeleton-info">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="timing-info">
+    <h3>Animation Timing (~8s cycles)</h3>
+    <ul>
+      <li><strong>Search Bar:</strong> Empty (2s) → Typing (2.5s) → Results (3.5s) → Reset</li>
+      <li><strong>Little Helper:</strong> FAB pulse (2.5s) → Open overlay (4.5s) → Reset</li>
+      <li><strong>Discovery Page:</strong> Browse (3.5s) → Results (4.5s) → Reset</li>
+    </ul>
+  </div>
+
+  <script>
+    // Animation 1: Search Bar (8s cycle)
+    // Empty (2s) → Typing (2.5s) → Results (3.5s) → Reset
+    function animateSearchBar() {
+      const mockup = document.querySelector('.search-bar-mockup');
+      let state = 'empty';
+
+      function cycle() {
+        switch(state) {
+          case 'empty':
+            mockup.dataset.state = 'empty';
+            setTimeout(() => {
+              state = 'typing';
+              cycle();
+            }, 2000);
+            break;
+          case 'typing':
+            mockup.dataset.state = 'typing';
+            setTimeout(() => {
+              state = 'results';
+              cycle();
+            }, 2500);
+            break;
+          case 'results':
+            mockup.dataset.state = 'results';
+            setTimeout(() => {
+              state = 'empty';
+              cycle();
+            }, 3500);
+            break;
+        }
+      }
+
+      cycle();
+    }
+
+    // Animation 2: FAB / Little Helper (8s cycle)
+    // Closed/pulse (2.5s) → Open (4s) → Close
+    function animateFab() {
+      const mockup = document.querySelector('.fab-mockup');
+      const fab = mockup.querySelector('.stacks-fab');
+      let state = 'closed';
+
+      function startPulse() {
+        fab.style.animation = 'fabPulse 1.2s ease-in-out infinite';
+      }
+
+      function stopPulse() {
+        fab.style.animation = 'none';
+      }
+
+      function cycle() {
+        switch(state) {
+          case 'closed':
+            mockup.dataset.state = 'closed';
+            startPulse();
+            setTimeout(() => {
+              stopPulse();
+              state = 'open';
+              cycle();
+            }, 2500);
+            break;
+          case 'open':
+            mockup.dataset.state = 'open';
+            setTimeout(() => {
+              state = 'closed';
+              cycle();
+            }, 4500);
+            break;
+        }
+      }
+
+      cycle();
+    }
+
+    // Add the pulse keyframes dynamically
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fabPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Animation 3: Discovery Page (8s cycle)
+    // Browse (3.5s) → Results (4.5s)
+    function animateDiscover() {
+      const mockup = document.querySelector('.discover-mockup');
+      let state = 'browse';
+
+      function cycle() {
+        switch(state) {
+          case 'browse':
+            mockup.dataset.state = 'browse';
+            setTimeout(() => {
+              state = 'results';
+              cycle();
+            }, 3500);
+            break;
+          case 'results':
+            mockup.dataset.state = 'results';
+            setTimeout(() => {
+              state = 'browse';
+              cycle();
+            }, 4500);
+            break;
+        }
+      }
+
+      cycle();
+    }
+
+    // Start all animations with slight offsets so they don't sync up
+    setTimeout(animateSearchBar, 0);
+    setTimeout(animateFab, 500);
+    setTimeout(animateDiscover, 1000);
+  </script>
+</body>
+</html>
